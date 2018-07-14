@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using RushOrders.Core.Interfaces.Repositories;
+using RushOrders.Core.Models;
 
 namespace RushOrders.Controllers
 {
@@ -10,11 +12,17 @@ namespace RushOrders.Controllers
     [ApiController]
     public class CustomerController : ControllerBase
     {
+        private readonly ICustomerRepository _customerRepository;
+
+        public CustomerController(ICustomerRepository customerRepository)
+        {
+            _customerRepository = customerRepository;
+        }
         // GET api/values
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public async Task<IEnumerable<Customer>> Get()
         {
-            return new string[] { "value1", "value2" };
+            return await _customerRepository.GetAllAsync();
         }
 
         // GET api/values/5

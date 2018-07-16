@@ -14,6 +14,7 @@ using Microsoft.Extensions.Options;
 using RushOrders.Core.Interfaces.Repositories;
 using RushOrders.Data.Context;
 using RushOrders.Data.Repositories;
+using RushOrders.Middleware;
 
 namespace RushOrders
 {
@@ -46,6 +47,7 @@ namespace RushOrders
             }
             else
             {
+                app.UseHttpStatusCodeExceptionMiddleware();
                 app.UseHsts();
             }
 

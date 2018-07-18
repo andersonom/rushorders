@@ -1,12 +1,17 @@
-﻿using System;
+﻿using MongoDB.Bson;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace RushOrders.Core.Models
 {
-    public class Orders
+    public class Order
     {
+
+        public ObjectId Id { get; set; }
         public Decimal Price { get; set; }
         public DateTime CreationDate { get; set; }
+
+        public Customer Customer { get; set; }
     }
 }

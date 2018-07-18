@@ -31,9 +31,14 @@ namespace RushOrders
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
+
+
+            services.AddScoped<MongoContext>();
 
             services.AddDbContext<SqlContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("SqlContext")));
+
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

@@ -29,8 +29,7 @@ namespace RushOrders.Controllers
         [HttpGet("{id}")]
         public async Task<Customer> Get(int id)
         {
-           return await _customerRepository.GetByIdAsync(id);
-            //return customers orders
+           return await _customerRepository.GetByIdAsync(id);            
         }
 
         // POST api/values

@@ -13,10 +13,12 @@ namespace RushOrders.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerRepository _customerRepository;
+        private readonly IOrderRepository _orderRepository;
 
-        public CustomerController(ICustomerRepository customerRepository)
+        public CustomerController(ICustomerRepository customerRepository, IOrderRepository orderRepository)
         {
             _customerRepository = customerRepository;
+            _orderRepository = orderRepository;
         }
         // GET api/values
         [HttpGet]
@@ -27,9 +29,12 @@ namespace RushOrders.Controllers
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public async Task<Customer> Get(int id)
+        public async Task<dynamic> Get(int id)
         {
-           return await _customerRepository.GetByIdAsync(id);            
+            var customer = await _customerRepository.GetByIdAsync(id);
+            var orders = await _orderRepository.GetOrdersByCustomerIdAsync(id);
+
+            return new { Customer = customer, Orders = orders };
         }
 
         // POST api/values

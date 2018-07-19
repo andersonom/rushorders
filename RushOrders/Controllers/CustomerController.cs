@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using RushOrders.Core.Interfaces.Repositories;
@@ -20,6 +18,7 @@ namespace RushOrders.Controllers
             _customerRepository = customerRepository;
             _orderRepository = orderRepository;
         }
+
         // GET api/values
         [HttpGet]
         public async Task<IEnumerable<Customer>> Get()
@@ -32,16 +31,27 @@ namespace RushOrders.Controllers
         public async Task<dynamic> Get(int id)
         {
             var customer = await _customerRepository.GetByIdAsync(id);
-            var orders = await _orderRepository.GetOrdersByCustomerIdAsync(id);
 
-            return new { Customer = customer, Orders = orders };
+            if (customer != null)
+            {
+                var orders = await _orderRepository.GetOrdersByCustomerIdAsync(id);
+
+                return new { Customer = customer, Orders = orders };
+            }
+
+            return NotFound();
         }
 
         // POST api/values
         [HttpPost]
-        public async Task Post([FromBody] Customer value)
+        public async Task<IActionResult> Post([FromBody] Customer customer)
         {
-            await _customerRepository.AddAsync(value);
+            if (ModelState.IsValid)
+            {
+                await _customerRepository.AddAsync(customer);
+                return Ok();
+            }
+            return BadRequest(customer);
         }
     }
 }

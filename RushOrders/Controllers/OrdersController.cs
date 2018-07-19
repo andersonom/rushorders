@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RushOrders.Core.Interfaces.Repositories;
-using RushOrders.Core.Models; 
+using RushOrders.Core.Models;
 
 namespace RushOrders.Controllers
 {
@@ -23,18 +20,29 @@ namespace RushOrders.Controllers
         }
         // POST: api/Orders
         [HttpPost]
-        public async Task Post([FromBody] Order order, int customerId)
+        public async Task<IActionResult> Post([FromBody] Order order, int customerId)
         {
             var customer = await _customerRepository.GetByIdAsync(customerId);
-            order.Customer = customer;
-            await _orderRepository.AddOrderAsync(order);            
+
+            if (customer != null)
+            {
+                order.Customer = customer;
+                if (ModelState.IsValid)
+                {               
+                    await _orderRepository.AddOrderAsync(order);
+                    return Ok();
+                }
+                return BadRequest(order);
+            }
+
+            return NotFound("Customer Not Found");
         }
 
         // GET api/values/5        
         [HttpGet]
         public async Task<List<Order>> Get(int customerId)
         {
-            return await _orderRepository.GetOrdersByCustomerIdAsync(customerId);            
+            return await _orderRepository.GetOrdersByCustomerIdAsync(customerId);
         }
     }
 }

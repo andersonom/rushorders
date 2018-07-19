@@ -1,61 +1,58 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using RushOrders.Exceptions;
 
 namespace RushOrders.Middleware
 {
-    // Extension method used to add the middleware to the HTTP request pipeline.
-    public static class HttpStatusCodeExceptionMiddlewareExtensions
-    {
-        public static IApplicationBuilder UseHttpStatusCodeExceptionMiddleware(this IApplicationBuilder builder)
+    /// <summary>
+    /// Extension method used to add the middleware to the HTTP request pipeline.
+    /// </summary>
+    public static class ErrorHandlingMiddleware
+    {    
+        public static IApplicationBuilder UseExceptionMiddleware(this IApplicationBuilder builder)
         {
-            return builder.UseMiddleware<HttpStatusCodeExceptionMiddleware>();
+            return builder.UseMiddleware<ExceptionMiddleware>();
         }
     }
 
-    public class HttpStatusCodeExceptionMiddleware
+    public class ExceptionMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ILogger<HttpStatusCodeExceptionMiddleware> _logger;
-
-        public HttpStatusCodeExceptionMiddleware(RequestDelegate next, ILoggerFactory loggerFactory)
+        private readonly ILogger<ExceptionMiddleware> _logger;
+        private readonly IHttpResponseStreamWriterFactory _streamWriterFactory;
+                
+        public ExceptionMiddleware(RequestDelegate next, ILoggerFactory loggerFactory, IHttpResponseStreamWriterFactory streamWriterFactory)
         {
             _next = next ?? throw new ArgumentNullException(nameof(next));
-            _logger = loggerFactory?.CreateLogger<HttpStatusCodeExceptionMiddleware>() ?? throw new ArgumentNullException(nameof(loggerFactory));
+            _logger = loggerFactory?.CreateLogger<ExceptionMiddleware>() ?? throw new ArgumentNullException(nameof(loggerFactory));
+            _streamWriterFactory = streamWriterFactory;
         }
 
         public async Task Invoke(HttpContext context)
         {
             try
             {
-                await _next(context);
+                await _next.Invoke(context);
             }
-            catch (HttpStatusCodeException ex)
+            catch (Exception ex)
             {
-                if (context.Response.HasStarted)
-                {
-                    _logger.LogWarning("The response has already started, the http status code middleware will not be executed.");
-                    throw;
-                }
-
-                context.Response.Clear();
-                context.Response.StatusCode = ex.StatusCode;
-                context.Response.ContentType = ex.ContentType;
-
-                await context.Response.WriteAsync(ex.Message);
-
-                return;
+                await HandleExceptionAsync(context, ex);
             }
         }
 
+        private async Task HandleExceptionAsync(HttpContext context, Exception ex)
+        {
+            var response = context.Response;
+            response.ContentType = "application/json";
+            response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+            _logger.LogError(ex, ex.Message, context);
+            await response.WriteAsync(JsonConvert.SerializeObject(ex));
+        }
     }
 }

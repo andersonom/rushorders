@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using RushOrders.Core.Models;
 
 
@@ -13,7 +10,6 @@ namespace RushOrders.Data.Context
             : base(options)
         {
         }
-
 
         public DbSet<Customer> Customer { get; set; }
 

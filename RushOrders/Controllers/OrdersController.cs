@@ -31,6 +31,7 @@ namespace RushOrders.Controllers
         }
 
         // GET api/values/5        
+        [HttpGet]
         public async Task<List<Order>> Get(int customerId)
         {
             return await _orderRepository.GetOrdersByCustomerIdAsync(customerId);            

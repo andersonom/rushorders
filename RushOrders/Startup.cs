@@ -13,6 +13,8 @@ using RushOrders.Middleware;
 using RushOrders.Core.Validations;
 using Swashbuckle.AspNetCore.Swagger;
 using FluentValidation.AspNetCore;
+using RushOrders.Core.Interfaces.Services;
+using RushOrders.Service;
 
 namespace RushOrders
 {
@@ -31,6 +33,8 @@ namespace RushOrders
             //TODO: Encapsulate repositories inside service layer, not calling directly from controller
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<ICustomerService, CustomerService>();
 
             services.AddScoped<MongoContext>();
 

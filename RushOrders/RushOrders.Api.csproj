@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RushOrders.Data\RushOrders.Data.csproj" />
+    <ProjectReference Include="..\RushOrders.Service\RushOrders.Service.csproj" />
   </ItemGroup>
 
 </Project>

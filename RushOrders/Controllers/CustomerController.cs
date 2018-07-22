@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using RushOrders.Core.Interfaces.Repositories;
+using RushOrders.Core.Interfaces.Services;
 using RushOrders.Core.Models;
 
 namespace RushOrders.Controllers
@@ -10,31 +11,31 @@ namespace RushOrders.Controllers
     [ApiController]
     public class CustomerController : ControllerBase
     {
-        private readonly ICustomerRepository _customerRepository;
-        private readonly IOrderRepository _orderRepository;
+        private readonly ICustomerService _customerService;
+        private readonly IOrderService _orderService;
 
-        public CustomerController(ICustomerRepository customerRepository, IOrderRepository orderRepository)
+        public CustomerController(ICustomerService customerService, IOrderService orderService)
         {
-            _customerRepository = customerRepository;
-            _orderRepository = orderRepository;
+            _customerService = customerService;
+            _orderService = orderService;
         }
 
         // GET api/values
         [HttpGet]
         public async Task<IEnumerable<Customer>> Get()
         {
-            return await _customerRepository.GetAllAsync();
+            return await _customerService.GetAllAsync();
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
         public async Task<dynamic> Get(int id)
         {
-            var customer = await _customerRepository.GetByIdAsync(id);
+            var customer = await _customerService.GetByIdAsync(id);
 
             if (customer != null)
             {
-                var orders = await _orderRepository.GetOrdersByCustomerIdAsync(id);
+                var orders = await _orderService.GetOrdersByCustomerIdAsync(id);
 
                 return new { Customer = customer, Orders = orders };
             }
@@ -48,7 +49,7 @@ namespace RushOrders.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _customerRepository.AddAsync(customer);
+                await _customerService.AddAsync(customer);
                 return Ok();
             }
             return BadRequest(customer);

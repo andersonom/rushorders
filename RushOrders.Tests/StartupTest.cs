@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using System;
+using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -18,9 +19,9 @@ using RushOrders.Service;
 
 namespace RushOrders
 {
-    public class Startup
+    public class StartupTest
     {
-        public Startup(IConfiguration configuration)
+        public StartupTest(IConfiguration configuration)
         {
             Configuration = configuration;
         }
@@ -29,16 +30,16 @@ namespace RushOrders
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {
+        { 
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<ICustomerService, CustomerService>();
 
-            services.AddScoped<MongoContext>();
-
+            //services.AddScoped<MongoContext>();
+            //Database in memory
             services.AddDbContext<SqlContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("SqlContext")));
+            options.UseInMemoryDatabase(Guid.NewGuid().ToString()), ServiceLifetime.Singleton);
 
             services.AddMvc()
                 .AddFluentValidation()
@@ -46,36 +47,12 @@ namespace RushOrders
 
             services.AddTransient<IValidator<Customer>, CustomerValidator>();
             services.AddTransient<IValidator<Order>, OrderValidator>();
-
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new Info { Title = "Orders API", Version = "v1" });
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionMiddleware();
-                app.UseHsts();
-            }
-
-            app.UseHttpsRedirection();
-
             app.UseMvc();
-
-            app.UseSwagger();
-
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Orders API V1");
-            });
         }
     }
 }

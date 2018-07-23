@@ -9,12 +9,10 @@ namespace RushOrders.Service
 {
     public class CustomerService : ICustomerService
     {
-        private readonly IOrderRepository _orderRepository;
         private readonly ICustomerRepository _customerRepository;
 
-        public CustomerService(IOrderRepository orderRepository, ICustomerRepository customerRepository)
+        public CustomerService(ICustomerRepository customerRepository)
         {
-            _orderRepository = orderRepository;
             _customerRepository = customerRepository;
         }
 

@@ -10,24 +10,28 @@ namespace RushOrders.Data.Repositories
 {
     public class OrderRepository : IOrderRepository
     {
-        private readonly MongoContext mongoContext;
+        private readonly IMongoContext _mongoContext;
 
-        public OrderRepository(MongoContext _mongoContext)
+        public OrderRepository(IMongoContext mongoContext)
         {
-            mongoContext = _mongoContext;
+            _mongoContext = mongoContext;
         }
-                 
+
         public async Task<List<Order>> GetOrdersByCustomerIdAsync(int customerId)
         {
-            var orders = mongoContext.Database.GetCollection<Order>("Order");
-            return await orders.Find(i => i.Customer.Id == customerId).ToListAsync();
+            var orders = _mongoContext.Database.GetCollection<Order>("Order");
+
+            if (orders != null)
+                return await orders.Find(i => i.Customer.Id == customerId).ToListAsync();
+
+            return null;
         }
 
         public async Task AddOrderAsync(Order order)
         {
-            var orders = mongoContext.Database.GetCollection<Order>("Order");
+            var orders = _mongoContext.Database.GetCollection<Order>("Order");
 
-            order.CreationDate = DateTime.UtcNow; //Maybe can be added to database configuration rule like in EF, check mongo
+            order.CreationDate = DateTime.UtcNow;
             await orders.InsertOneAsync(order);
         }
     }

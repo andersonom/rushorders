@@ -1,7 +1,6 @@
 ﻿using System;
 using FluentValidation;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -10,12 +9,11 @@ using RushOrders.Core.Interfaces.Repositories;
 using RushOrders.Core.Models;
 using RushOrders.Data.Context;
 using RushOrders.Data.Repositories;
-using RushOrders.Middleware;
 using RushOrders.Core.Validations;
-using Swashbuckle.AspNetCore.Swagger;
 using FluentValidation.AspNetCore;
 using RushOrders.Core.Interfaces.Services;
 using RushOrders.Service;
+using Moq;
 
 namespace RushOrders
 {
@@ -30,14 +28,22 @@ namespace RushOrders
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        { 
+        {
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<ICustomerService, CustomerService>();
 
-            //services.AddScoped<MongoContext>();
+            Mock<IMongoContext> mongoMoq = new Mock<IMongoContext>();
+
+            mongoMoq.SetupAllProperties();
+            mongoMoq.Setup(x => x.Database.GetCollection<Order>("Order", null));
+            //TODO: Missing .Return method, could't mock MongoDB.Driver.MongoCollectionImpl because of intenal access modifier
+
+            services.AddSingleton<IMongoContext>(mongoMoq.Object);
+
             //Database in memory
+
             services.AddDbContext<SqlContext>(options =>
             options.UseInMemoryDatabase(Guid.NewGuid().ToString()), ServiceLifetime.Singleton);
 

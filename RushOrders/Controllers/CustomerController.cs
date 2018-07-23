@@ -35,6 +35,7 @@ namespace RushOrders.Controllers
 
             if (customer != null)
             {
+                //TODO: Add this logic to Service Layer
                 var orders = await _orderService.GetOrdersByCustomerIdAsync(id);
 
                 return new { Customer = customer, Orders = orders };

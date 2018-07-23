@@ -28,7 +28,6 @@ namespace RushOrders.Controllers
             return BadRequest(order);
         }
 
-
         // GET api/values/5        
         [HttpGet]
         public async Task<List<Order>> Get(int customerId)

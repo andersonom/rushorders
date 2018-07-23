@@ -35,7 +35,7 @@ namespace RushOrders
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<ICustomerService, CustomerService>();
 
-            services.AddScoped<MongoContext>();
+            services.AddScoped<IMongoContext,MongoContext>();
 
             services.AddDbContext<SqlContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("SqlContext")));

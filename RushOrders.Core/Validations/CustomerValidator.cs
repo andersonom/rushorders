@@ -7,8 +7,8 @@ namespace RushOrders.Core.Validations
     {
         public CustomerValidator()
         {
-            RuleFor(x => x.Name).Length(0, 50);
-            RuleFor(x => x.Email).EmailAddress();
+            RuleFor(x => x.Name).NotEmpty().Length(1, 50);
+            RuleFor(x => x.Email).NotEmpty().EmailAddress();
         }
     }
 }

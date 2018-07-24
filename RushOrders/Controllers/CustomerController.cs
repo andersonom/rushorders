@@ -53,7 +53,7 @@ namespace RushOrders.Controllers
                 await _customerService.AddAsync(customer);
                 return Ok();
             }
-            return BadRequest(customer);
+            return BadRequest(ModelState);
         }
     }
 }

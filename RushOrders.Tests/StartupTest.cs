@@ -14,6 +14,7 @@ using FluentValidation.AspNetCore;
 using RushOrders.Core.Interfaces.Services;
 using RushOrders.Service;
 using Moq;
+// ReSharper disable All
 
 namespace RushOrders
 {
@@ -29,28 +30,29 @@ namespace RushOrders
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Services
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<ICustomerService, CustomerService>();
-
+            
+            //Mocked MongoDb
             Mock<IMongoContext> mongoMoq = new Mock<IMongoContext>();
-
             mongoMoq.SetupAllProperties();
-            mongoMoq.Setup(x => x.Database.GetCollection<Order>("Order", null));
+            mongoMoq.Setup(x => x.Database.GetCollection<Order>("Order", null));//.Returns(new MongoCollectionImpl<Order>());
             //TODO: Missing .Return method, could't mock MongoDB.Driver.MongoCollectionImpl because of intenal access modifier
 
             services.AddSingleton<IMongoContext>(mongoMoq.Object);
 
-            //Database in memory
-
+            //Sql in memory
             services.AddDbContext<SqlContext>(options =>
             options.UseInMemoryDatabase(Guid.NewGuid().ToString()), ServiceLifetime.Singleton);
 
             services.AddMvc()
-                .AddFluentValidation()
+                .AddFluentValidation()//Fluent Validation
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+            //Fluent Validation
             services.AddTransient<IValidator<Customer>, CustomerValidator>();
             services.AddTransient<IValidator<Order>, OrderValidator>();
         }

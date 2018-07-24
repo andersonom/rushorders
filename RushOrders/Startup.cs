@@ -30,23 +30,28 @@ namespace RushOrders
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Services
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<ICustomerService, CustomerService>();
-
+            
+            //Mongo DB
             services.AddScoped<IMongoContext,MongoContext>();
 
+            //SQL
             services.AddDbContext<SqlContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("SqlContext")));
 
             services.AddMvc()
-                .AddFluentValidation()
+                .AddFluentValidation()  //Fluent Validation
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+            //Fluent Validation
             services.AddTransient<IValidator<Customer>, CustomerValidator>();
             services.AddTransient<IValidator<Order>, OrderValidator>();
 
+            //Swagger
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "Orders API", Version = "v1" });

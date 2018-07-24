@@ -12,17 +12,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using System.Net;
+using System.Text;
 using FluentAssertions;
 
 namespace RushOrders.Tests.Integration
 {
-    public class CustomerControllerShould
+    public class CustomerControllerShould 
     {
         private readonly TestServer _server;
         private readonly HttpClient _client;
         private readonly SqlContext _context;
 
-        public CustomerControllerShould()
+        public CustomerControllerShould() 
         {
             // Arrange
             _server = new TestServer(new WebHostBuilder()
@@ -32,7 +33,7 @@ namespace RushOrders.Tests.Integration
             _context = _server.Host.Services.GetService(typeof(SqlContext)) as SqlContext;
             CustomerRepository repo = new CustomerRepository(_context);
 
-            repo.AddAsync(CustomerFixtures.GetCustomerList.FirstOrDefault()).GetAwaiter().GetResult();
+            repo.AddAsync(CustomerFixtures.GetCustomerList.FirstOrDefault());
         }
 
         [Fact]
@@ -51,7 +52,7 @@ namespace RushOrders.Tests.Integration
                 .FirstOrDefault(i => CustomerFixtures.GetCustomerList.FirstOrDefault().Name == i.Name);
 
             // Assert - Using FluentAssertions
-            expectedCustomer.Should().BeEquivalentTo(insertedCustomer);
+            expectedCustomer.Should().BeEquivalentTo(insertedCustomer, i=> i.Excluding(p=> p.Id));
         }
 
         [Fact]
@@ -59,20 +60,51 @@ namespace RushOrders.Tests.Integration
         {
             // Act
             HttpResponseMessage response = await _client.GetAsync("/api/customer/99");
-             
-            Assert.Equal((int)response.StatusCode, (int)HttpStatusCode.NotFound);
+
+            //Assert 
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
         [Fact]
-        public async Task CustomerShouldReturnBadRequest()
-        { 
+        public async Task CustomerShouldReturnBadRequestWhenEmailIsInvalid()
+        {
+            // Act
+            StringContent content = new StringContent(JsonConvert.SerializeObject(CustomerFixtures.GetCustomerWithInvalidEmail),
+                Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await _client.PostAsync("/api/customer/", content);
 
+            //Assert 
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task CustomerShouldReturnBadRequestWhenNameIsInvalid()
+        {
+            // Act
+            StringContent content = new StringContent(JsonConvert.SerializeObject(CustomerFixtures.GetCustomerWithInvalidName),
+                Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await _client.PostAsync("/api/customer/", content);
+
+            //Assert 
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task CustomerShouldReturnOkWhenValid()
+        {
+            // Act
+            StringContent content = new StringContent(JsonConvert.SerializeObject(CustomerFixtures.GetCustomerList.FirstOrDefault()),
+                Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await _client.PostAsync("/api/customer/", content);
+
+            //Assert 
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
 
         [Fact]
         public async Task CustomerShouldHasOrder()
         {
-
+            //TODO: Fix Mongo MOCK 
         }
     }
 }

@@ -1,8 +1,8 @@
 #TODO:
 
-- Mongo Test Integration
+- Could use DTOs/ViewModels to decouple better, but I choose to use only model to save time due to small scope
 - Other Exception handlers
-- Return BadRequest via Action OnExecuting and etc.
+- Return BadRequest and others via Action Filter OnExecuting.
 - Not saving user and pass at source code.
 - Correlation ID
 - Customizing EF mapping SQL char limitation and automatic CreatedDate 
@@ -20,4 +20,4 @@
 - Moq
 
 # Other Notes
-- There is no try catch because the only try catch is on the  RushOrders.Middleware.ErrorHandlingMiddleware
+- There is only one try catch that is at the RushOrders.Middleware.ErrorHandlingMiddleware

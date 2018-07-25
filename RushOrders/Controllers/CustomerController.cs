@@ -29,16 +29,13 @@ namespace RushOrders.Controllers
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public async Task<dynamic> Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             var customer = await _customerService.GetByIdAsync(id);
 
             if (customer != null)
             {
-                //TODO: Add this logic to Service Layer
-                var orders = await _orderService.GetOrdersByCustomerIdAsync(id);
-
-                return new { Customer = customer, Orders = orders };
+                return Ok(customer);
             }
 
             return NotFound();

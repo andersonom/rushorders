@@ -5,7 +5,6 @@ using RushOrders.Core.Models;
 using RushOrders.Core.Validations;
 using RushOrders.Tests.Fixture;
 using Xunit;
-using System.Threading.Tasks;
 
 namespace RushOrders.Tests.Unit
 {
@@ -43,9 +42,14 @@ namespace RushOrders.Tests.Unit
         [InlineData("first.last@test.co.uk")]
         public void CustomerShouldHaveAValidEmail(string email)
         {
-            //Act
-            Customer sut = CustomerFixtures.GetCustomerList.FirstOrDefault();
-            sut.Email = email;
+            //Act 
+            Customer sut = new Customer()
+            {
+                Id = 1,
+                Name = "Anderson Martins",
+                Email = email
+            };
+
             var results = validator.Validate(sut);
 
             //Assert
@@ -60,13 +64,13 @@ namespace RushOrders.Tests.Unit
         [InlineData("andersonom@gmail..com")]
         public void CustomerShouldHaveInvalidEmail(string email)
         {
-            //Act
+            //Act 
             Customer sut = new Customer()
             {
                 Id = 1,
                 Name = "Anderson Martins",
                 Email = email
-            }; ;
+            };
             var results = validator.Validate(sut);
 
             //Assert
@@ -93,6 +97,15 @@ namespace RushOrders.Tests.Unit
             //Assert
             Assert.False(results.IsValid);
         }
-        //Customer has  Name and  EmailCustomer can  have multiple  OrdersOrder can  belong to  only one  CustomerOrder has  at least  two fields:  Price and  CreatedDate.
+
+        [Fact]
+        public void CustomerCanHaveMultipleOrders()
+        {
+            //Act 
+            Customer sut = CustomerFixtures.GetCustomerList.FirstOrDefault();
+
+            sut.Orders = new System.Collections.Generic.List<Order>();
+             
+        }
     }
 }

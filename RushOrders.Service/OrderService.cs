@@ -22,14 +22,14 @@ namespace RushOrders.Service
             return await _orderRepository.GetOrdersByCustomerIdAsync(customerId);
         }
 
-        public async Task<bool> AddOrderAsync(Order order, int customerId)
+        public async Task<bool> AddAsync(Order order, int customerId)
         {
             Customer customer = await _customerRepository.GetByIdAsync(customerId);
 
             if (customer == null) return false;
 
             order.Customer = customer;
-
+            
             await _orderRepository.AddOrderAsync(order);
 
             return true;

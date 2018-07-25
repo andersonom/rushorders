@@ -14,30 +14,24 @@ using System;
 using System.Net;
 using System.Text;
 using FluentAssertions;
+using RushOrders.Core.Interfaces.Repositories;
+using RushOrders.Core.Interfaces.Services;
+using RushOrders.Service;
+using RushOrders.Tests.Mock;
 
 namespace RushOrders.Tests.Integration
 {
-    public class CustomerControllerShould 
+    public class CustomerControllerShould : IntegrationTestsBase
     {
-        private readonly TestServer _server;
-        private readonly HttpClient _client;
-        private readonly SqlContext _context;
-
-        public CustomerControllerShould() 
+        
+        public CustomerControllerShould()
         {
-            // Arrange
-            _server = new TestServer(new WebHostBuilder()
-               .UseStartup<StartupTest>());
-            _client = _server.CreateClient();
-
-            _context = _server.Host.Services.GetService(typeof(SqlContext)) as SqlContext;
-            CustomerRepository repo = new CustomerRepository(_context);
-
-            repo.AddAsync(CustomerFixtures.GetCustomerList.FirstOrDefault());
+            //Arrange
+            var customer = _customerService.GetAllAsync().GetAwaiter().GetResult().FirstOrDefault();
         }
 
         [Fact]
-        public async Task CustomerShouldBeFound()
+        public async Task CustomersShouldBeFound()
         {
             // Act
             HttpResponseMessage response = await _client.GetAsync("/api/customer");
@@ -46,13 +40,31 @@ namespace RushOrders.Tests.Integration
             string responseString = await response.Content.ReadAsStringAsync();
 
             var insertedCustomer = JsonConvert.DeserializeObject<List<Customer>>(responseString)
-                .FirstOrDefault(i => CustomerFixtures.GetCustomerList.FirstOrDefault().Name == i.Name);
+                .FirstOrDefault(i => CustomerFixtures.GetCustomerList.FirstOrDefault()?.Name == i.Name);
 
             var expectedCustomer = CustomerFixtures.GetCustomerList
-                .FirstOrDefault(i => CustomerFixtures.GetCustomerList.FirstOrDefault().Name == i.Name);
+                .FirstOrDefault(i => CustomerFixtures.GetCustomerList.FirstOrDefault()?.Name == i.Name);
 
             // Assert - Using FluentAssertions
-            expectedCustomer.Should().BeEquivalentTo(insertedCustomer, i=> i.Excluding(p=> p.Id));
+            expectedCustomer.Should().BeEquivalentTo(insertedCustomer, i => i.Excluding(p => p.Id));
+        }
+
+        [Fact]
+        public async Task CustomerShouldBeFound()
+        {
+            // Act
+            var expectedCustomer = _customerService.GetAllAsync().GetAwaiter().GetResult().FirstOrDefault();
+            
+            HttpResponseMessage response = await _client.GetAsync($"/api/customer/{expectedCustomer.Id}");
+
+            response.EnsureSuccessStatusCode();
+
+            string responseString = await response.Content.ReadAsStringAsync();
+
+            var insertedCustomer = JsonConvert.DeserializeObject<Customer>(responseString);
+
+            // Assert - Using FluentAssertions
+            expectedCustomer.Should().BeEquivalentTo(insertedCustomer, i => i.Excluding(p => p.Id));
         }
 
         [Fact]

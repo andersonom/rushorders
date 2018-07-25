@@ -10,15 +10,23 @@ namespace RushOrders.Service
     public class CustomerService : ICustomerService
     {
         private readonly ICustomerRepository _customerRepository;
+        private readonly IOrderRepository _orderRepository;
 
-        public CustomerService(ICustomerRepository customerRepository)
+        public CustomerService(ICustomerRepository customerRepository, IOrderRepository orderRepository)
         {
             _customerRepository = customerRepository;
+            _orderRepository = orderRepository;
         }
 
         public async Task<Customer> GetByIdAsync(int customerId)
         {
-            return await _customerRepository.GetByIdAsync(customerId);
+            var customer = await _customerRepository.GetByIdAsync(customerId);
+            if (customer != null)
+            {
+                customer.Orders = await _orderRepository.GetOrdersByCustomerIdAsync(customerId);
+            }
+
+            return customer;
         }
 
         public async Task AddAsync(Customer customer)

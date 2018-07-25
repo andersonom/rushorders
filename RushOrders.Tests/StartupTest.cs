@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +12,12 @@ using RushOrders.Data.Context;
 using RushOrders.Data.Repositories;
 using RushOrders.Core.Validations;
 using FluentValidation.AspNetCore;
+using MongoDB.Driver;
 using RushOrders.Core.Interfaces.Services;
 using RushOrders.Service;
 using Moq;
+using RushOrders.Tests.Mock;
+
 // ReSharper disable All
 
 namespace RushOrders
@@ -32,17 +36,15 @@ namespace RushOrders
         {
             //Services
             services.AddScoped<ICustomerRepository, CustomerRepository>();
-            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddSingleton<IOrderRepository, OrderMockedRepository>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<ICustomerService, CustomerService>();
-            
-            //Mocked MongoDb
-            Mock<IMongoContext> mongoMoq = new Mock<IMongoContext>();
-            mongoMoq.SetupAllProperties();
-            mongoMoq.Setup(x => x.Database.GetCollection<Order>("Order", null));//.Returns(new MongoCollectionImpl<Order>());
-            //TODO: Missing .Return method, could't mock MongoDB.Driver.MongoCollectionImpl because of intenal access modifier
 
-            services.AddSingleton<IMongoContext>(mongoMoq.Object);
+            ////Mocked MongoDb was aproach was replaced by using OrderMockedRepository since MongoCollectionImpl couldnt be mocked.
+            //Mock<IMongoContext> mongoMoq = new Mock<IMongoContext>();
+            //mongoMoq.SetupAllProperties();
+            //mongoMoq.Setup(x => x.Database.GetCollection<Order>("Order", null));//.Returns(new MongoCollectionImpl<Order>());
+            //services.AddSingleton<IMongoContext>(mongoMoq.Object);
 
             //Sql in memory
             services.AddDbContext<SqlContext>(options =>

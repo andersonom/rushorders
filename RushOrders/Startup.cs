@@ -13,6 +13,7 @@ using RushOrders.Middleware;
 using RushOrders.Core.Validations;
 using Swashbuckle.AspNetCore.Swagger;
 using FluentValidation.AspNetCore;
+using Newtonsoft.Json;
 using RushOrders.Core.Interfaces.Services;
 using RushOrders.Service;
 
@@ -35,15 +36,16 @@ namespace RushOrders
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<ICustomerService, CustomerService>();
-            
+
             //Mongo DB
-            services.AddScoped<IMongoContext,MongoContext>();
+            services.AddScoped<IMongoContext, MongoContext>();
 
             //SQL
             services.AddDbContext<SqlContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("SqlContext")));
 
             services.AddMvc()
+                .AddJsonOptions(options => { options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore; })
                 .AddFluentValidation()  //Fluent Validation
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 

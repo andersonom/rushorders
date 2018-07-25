@@ -16,13 +16,14 @@ namespace RushOrders.Controllers
         {
             _orderService = orderService;
         }
+
         // POST: api/Orders
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Order order, int customerId)
         {
             if (ModelState.IsValid)
             {
-                if (await _orderService.AddOrderAsync(order, customerId))
+                if (await _orderService.AddAsync(order, customerId))
                     return Ok();
             }
             return BadRequest(order);
@@ -30,9 +31,13 @@ namespace RushOrders.Controllers
 
         // GET api/values/5        
         [HttpGet]
-        public async Task<List<Order>> Get(int customerId)
+        public async Task<IActionResult> Get(int customerId)
         {
-            return await _orderService.GetOrdersByCustomerIdAsync(customerId); 
+            var orders = await _orderService.GetOrdersByCustomerIdAsync(customerId);
+            if (orders != null && orders.Count > 0)
+                return Ok(orders);
+
+            return NotFound();
         }
     }
 }

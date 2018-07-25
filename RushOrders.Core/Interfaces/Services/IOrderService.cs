@@ -7,6 +7,6 @@ namespace RushOrders.Core.Interfaces.Services
     public interface IOrderService
     {
         Task<List<Order>> GetOrdersByCustomerIdAsync(int customerId);
-        Task<bool> AddOrderAsync(Order order, int customerId);
+        Task<bool> AddAsync(Order order, int customerId);
     }
 }

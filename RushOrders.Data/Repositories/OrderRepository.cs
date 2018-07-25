@@ -21,17 +21,13 @@ namespace RushOrders.Data.Repositories
         {
             var orders = _mongoContext.Database.GetCollection<Order>("Order");
 
-            if (orders != null)
-                return await orders.Find(i => i.Customer.Id == customerId).ToListAsync();
-
-            return null;
+            return await orders.Find(i => i.Customer.Id == customerId).ToListAsync();
         }
 
         public async Task AddOrderAsync(Order order)
         {
             var orders = _mongoContext.Database.GetCollection<Order>("Order");
 
-            order.CreationDate = DateTime.UtcNow;
             await orders.InsertOneAsync(order);
         }
     }

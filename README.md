@@ -1,12 +1,13 @@
 #TODO:
 
-- Mongo Test Integration
+- Could use DTO/View model to decouple more, but I prefer to use models due to small scope to save time
 - Other Exception handlers
-- Return BadRequest via Action OnExecuting and etc.
+- Return BadRequest and others via Action Filter OnExecuting.
 - Not saving user and pass at source code.
 - Correlation ID
 - Customizing EF mapping SQL char limitation and automatic CreatedDate 
 - Authentication and Authorization was already outside scope
+- Capture log from ILogger at Middleware.ErrorHandlingMiddleware
 
 #Some utilized libs to mention:
 - MongoDB.Driver
@@ -17,7 +18,7 @@
 - FluentValidation
 - FluentAssertions
 - xUnit
-- Moq
+- Moq - Only for mongodb driver, but changed the strategy
 
 # Other Notes
-- There is no try catch because the only try catch is on the  RushOrders.Middleware.ErrorHandlingMiddleware
+- There is only one try catch in the RushOrders.Middleware.ErrorHandlingMiddleware

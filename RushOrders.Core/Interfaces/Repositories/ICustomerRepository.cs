@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using RushOrders.Core.Models;
+﻿using RushOrders.Core.Models;
 
 namespace RushOrders.Core.Interfaces.Repositories
 {

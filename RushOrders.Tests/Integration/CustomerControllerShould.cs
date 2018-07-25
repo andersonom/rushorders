@@ -1,37 +1,21 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.TestHost;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 using RushOrders.Core.Models;
-using RushOrders.Data.Context;
 using Xunit;
-using RushOrders.Data.Repositories;
 using Newtonsoft.Json;
 using RushOrders.Tests.Fixture;
 using System.Collections.Generic;
 using System.Linq;
-using System;
 using System.Net;
 using System.Text;
 using FluentAssertions;
-using RushOrders.Core.Interfaces.Repositories;
-using RushOrders.Core.Interfaces.Services;
-using RushOrders.Service;
-using RushOrders.Tests.Mock;
 
 namespace RushOrders.Tests.Integration
 {
     public class CustomerControllerShould : IntegrationTestsBase
-    {
-        
-        public CustomerControllerShould()
-        {
-            //Arrange
-            var customer = _customerService.GetAllAsync().GetAwaiter().GetResult().FirstOrDefault();
-        }
-
+    { 
         [Fact]
-        public async Task CustomersShouldBeFound()
+        public async Task BeFoundWhenInserted()
         {
             // Act
             HttpResponseMessage response = await _client.GetAsync("/api/customer");
@@ -50,11 +34,11 @@ namespace RushOrders.Tests.Integration
         }
 
         [Fact]
-        public async Task CustomerShouldBeFound()
+        public async Task BeFoundByIdWhenInserted()
         {
             // Act
             var expectedCustomer = _customerService.GetAllAsync().GetAwaiter().GetResult().FirstOrDefault();
-            
+
             HttpResponseMessage response = await _client.GetAsync($"/api/customer/{expectedCustomer.Id}");
 
             response.EnsureSuccessStatusCode();
@@ -68,7 +52,7 @@ namespace RushOrders.Tests.Integration
         }
 
         [Fact]
-        public async Task CustomerShouldReturnNotFound()
+        public async Task  ReturnNotFoundWhenInvalidIdProvided()
         {
             // Act
             HttpResponseMessage response = await _client.GetAsync("/api/customer/99");
@@ -78,7 +62,7 @@ namespace RushOrders.Tests.Integration
         }
 
         [Fact]
-        public async Task CustomerShouldReturnBadRequestWhenEmailIsInvalid()
+        public async Task ReturnBadRequestWhenEmailIsInvalid()
         {
             // Act
             StringContent content = new StringContent(JsonConvert.SerializeObject(CustomerFixtures.GetCustomerWithInvalidEmail),
@@ -90,7 +74,7 @@ namespace RushOrders.Tests.Integration
         }
 
         [Fact]
-        public async Task CustomerShouldReturnBadRequestWhenNameIsInvalid()
+        public async Task ReturnBadRequestWhenNameIsInvalid()
         {
             // Act
             StringContent content = new StringContent(JsonConvert.SerializeObject(CustomerFixtures.GetCustomerWithInvalidName),
@@ -102,7 +86,7 @@ namespace RushOrders.Tests.Integration
         }
 
         [Fact]
-        public async Task CustomerShouldReturnOkWhenValid()
+        public async Task ReturnOkWhenValid()
         {
             // Act
             StringContent content = new StringContent(JsonConvert.SerializeObject(CustomerFixtures.GetCustomerList.FirstOrDefault()),
@@ -111,12 +95,6 @@ namespace RushOrders.Tests.Integration
 
             //Assert 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        }
-
-        [Fact]
-        public async Task CustomerShouldHasOrder()
-        {
-            //TODO: Fix Mongo MOCK 
         }
     }
 }

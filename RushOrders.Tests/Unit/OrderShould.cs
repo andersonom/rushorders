@@ -1,8 +1,6 @@
 using System;
-using System.Linq;
 using RushOrders.Core.Models;
 using RushOrders.Core.Validations;
-using RushOrders.Tests.Fixture;
 using Xunit;
 
 namespace RushOrders.Tests.Unit
@@ -15,6 +13,7 @@ namespace RushOrders.Tests.Unit
             //Arrange
             validator = new OrderValidator();
         }
+
         [Fact]
         public void OrderShouldBeValid()
         {
@@ -60,6 +59,7 @@ namespace RushOrders.Tests.Unit
             //Assert
             Assert.True(results.IsValid);
         }
+
         [Theory]
         [InlineData(0)]
         [InlineData(-1)]

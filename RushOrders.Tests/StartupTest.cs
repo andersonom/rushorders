@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +11,8 @@ using RushOrders.Data.Context;
 using RushOrders.Data.Repositories;
 using RushOrders.Core.Validations;
 using FluentValidation.AspNetCore;
-using MongoDB.Driver;
 using RushOrders.Core.Interfaces.Services;
 using RushOrders.Service;
-using Moq;
 using RushOrders.Tests.Mock;
 
 // ReSharper disable All

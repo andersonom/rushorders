@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Net.Http;
-using System.Text;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using RushOrders.Core.Interfaces.Repositories;
@@ -16,8 +13,7 @@ using RushOrders.Tests.Mock;
 namespace RushOrders.Tests.Integration
 {
     public abstract class IntegrationTestsBase
-    {
-        protected IOrderRepository _orderRepository;
+    { 
         protected IOrderService _orderService;
         protected ICustomerService _customerService;
         protected TestServer _server;

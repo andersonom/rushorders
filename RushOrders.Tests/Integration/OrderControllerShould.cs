@@ -1,41 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.TestHost;
 using Newtonsoft.Json;
-using RushOrders.Core.Interfaces.Repositories;
-using RushOrders.Core.Interfaces.Services;
 using RushOrders.Core.Models;
-using RushOrders.Data.Context;
-using RushOrders.Data.Repositories;
-using RushOrders.Service;
-using RushOrders.Tests.Fixture;
-using RushOrders.Tests.Mock;
 using Xunit;
 
 namespace RushOrders.Tests.Integration
 {
     public class OrderControllerShould : IntegrationTestsBase
     {
-
-        public OrderControllerShould()
-        {   
-            //Arrange
-            var customer = _customerService.GetAllAsync().GetAwaiter().GetResult().FirstOrDefault();
-            _orderService.AddAsync(new Order() { Price = new decimal(180.66) }, customer.Id);
-        }
-
         [Fact]
-        public async Task OrderShouldBeFound()
+        public async Task BeFoundWhenInserted()
         {  //Act
             var customers = await _customerService.GetAllAsync();
             var customer = customers.FirstOrDefault();
+            Order sut = new Order()
+            {
+                Price = new decimal(456.96)
+            };
+            StringContent content = new StringContent(JsonConvert.SerializeObject(sut),
+                Encoding.UTF8, "application/json");
+            HttpResponseMessage responsePost = await _client.PostAsync($"/api/customer/{customer.Id}/orders", content);
+
+            responsePost.EnsureSuccessStatusCode();
 
             var expectedOrder = await _orderService.GetOrdersByCustomerIdAsync(customer.Id);
             HttpResponseMessage response = await _client.GetAsync($"/api/customer/{customer.Id}/orders");
@@ -54,7 +45,7 @@ namespace RushOrders.Tests.Integration
         }
 
         [Fact]
-        public async Task OrderShouldHasAValidCustomer()
+        public async Task HaveAValidCustomer()
         {
             //Act
             var customers = await _customerService.GetAllAsync();
@@ -72,7 +63,7 @@ namespace RushOrders.Tests.Integration
         [InlineData(1099)]
         [InlineData(99)]
         [InlineData(77)]
-        public async Task OrderShouldReturnNotFoundWhenInvalidCustomer(int customerId)
+        public async Task ReturnNotFoundWhenInvalidCustomer(int customerId)
         {
             // Act
             HttpResponseMessage response = await _client.GetAsync($"/api/customer/{customerId}/orders");
@@ -82,7 +73,7 @@ namespace RushOrders.Tests.Integration
         }
 
         [Fact]
-        public async Task OrderShouldReturnBadRequestWhenPriceIsInvalid()
+        public async Task ReturnBadRequestWhenPriceIsInvalid()
         {
             // Act
             Order sut = new Order()
@@ -99,16 +90,19 @@ namespace RushOrders.Tests.Integration
 
             //Assert 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        }
+        } 
 
         [Fact]
-        public async Task OrderShouldReturnOkWhenValid()
+        public async Task ReturnOkWhenValid()
         {
             //Act
             var customers = await _customerService.GetAllAsync();
             var customer = customers.FirstOrDefault();
+            _orderService.AddAsync(new Order() { Price = new decimal(180.66) }, customer.Id);
 
             HttpResponseMessage response = await _client.GetAsync($"/api/customer/{customer.Id}/orders");
+
+            response.EnsureSuccessStatusCode();
 
             //Assert 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);

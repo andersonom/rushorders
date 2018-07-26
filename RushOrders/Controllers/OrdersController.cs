@@ -20,11 +20,9 @@ namespace RushOrders.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Order order, int customerId)
         {
-            if (ModelState.IsValid)
-            {
                 if (await _orderService.AddAsync(order, customerId))
                     return Ok();
-            }
+           
             return BadRequest(order);
         }
 

@@ -23,10 +23,10 @@ namespace RushOrders.Tests.Integration
 
             string responseString = await response.Content.ReadAsStringAsync();
 
-            var insertedCustomer = JsonConvert.DeserializeObject<List<Customer>>(responseString)
+            Customer insertedCustomer = JsonConvert.DeserializeObject<List<Customer>>(responseString)
                 .FirstOrDefault(i => CustomerFixtures.GetCustomerList.FirstOrDefault()?.Name == i.Name);
 
-            var expectedCustomer = CustomerFixtures.GetCustomerList
+            Customer expectedCustomer = CustomerFixtures.GetCustomerList
                 .FirstOrDefault(i => CustomerFixtures.GetCustomerList.FirstOrDefault()?.Name == i.Name);
 
             // Assert - Using FluentAssertions
@@ -37,7 +37,7 @@ namespace RushOrders.Tests.Integration
         public async Task BeFoundByIdWhenInserted()
         {
             // Act
-            var expectedCustomer = _customerService.GetAllAsync().GetAwaiter().GetResult().FirstOrDefault();
+            Customer expectedCustomer = _customerService.GetAllAsync().GetAwaiter().GetResult().FirstOrDefault();
 
             HttpResponseMessage response = await _client.GetAsync($"/api/customer/{expectedCustomer.Id}");
 
@@ -45,7 +45,7 @@ namespace RushOrders.Tests.Integration
 
             string responseString = await response.Content.ReadAsStringAsync();
 
-            var insertedCustomer = JsonConvert.DeserializeObject<Customer>(responseString);
+            Customer insertedCustomer = JsonConvert.DeserializeObject<Customer>(responseString);
 
             // Assert - Using FluentAssertions
             expectedCustomer.Should().BeEquivalentTo(insertedCustomer, i => i.Excluding(p => p.Id));

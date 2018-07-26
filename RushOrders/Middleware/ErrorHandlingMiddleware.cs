@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace RushOrders.Middleware
+namespace RushOrders.Api.Middleware
 {
     /// <summary>
     /// Extension method used to add the middleware to the HTTP request pipeline.

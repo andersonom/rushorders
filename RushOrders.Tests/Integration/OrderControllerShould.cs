@@ -16,8 +16,8 @@ namespace RushOrders.Tests.Integration
         [Fact]
         public async Task BeFoundWhenInserted()
         {  //Act
-            var customers = await _customerService.GetAllAsync();
-            var customer = customers.FirstOrDefault();
+            IEnumerable<Customer> customers = await _customerService.GetAllAsync();
+            Customer customer = customers.FirstOrDefault();
             Order sut = new Order()
             {
                 Price = new decimal(456.96)
@@ -48,12 +48,12 @@ namespace RushOrders.Tests.Integration
         public async Task HaveAValidCustomer()
         {
             //Act
-            var customers = await _customerService.GetAllAsync();
-            var customer = customers.FirstOrDefault();
+            IEnumerable<Customer> customers = await _customerService.GetAllAsync();
+            Customer customer = customers.FirstOrDefault();
 
             var orders = await _orderService.GetOrdersByCustomerIdAsync(customer.Id);
 
-            foreach (var item in orders)
+            foreach (Order item in orders)
                 //Assert
                 Assert.Equal(customer.Id, item.Customer.Id);
         }
@@ -81,8 +81,8 @@ namespace RushOrders.Tests.Integration
                 Price = -1
             };
 
-            var customers = await _customerService.GetAllAsync();
-            var customer = customers.FirstOrDefault();
+            IEnumerable<Customer> customers = await _customerService.GetAllAsync();
+            Customer customer = customers.FirstOrDefault();
 
             StringContent content = new StringContent(JsonConvert.SerializeObject(sut),
                 Encoding.UTF8, "application/json");
@@ -97,8 +97,8 @@ namespace RushOrders.Tests.Integration
         {
             //Act
             var customers = await _customerService.GetAllAsync();
-            var customer = customers.FirstOrDefault();
-            _orderService.AddAsync(new Order() { Price = new decimal(180.66) }, customer.Id);
+            Customer customer = customers.FirstOrDefault();
+            await _orderService.AddAsync(new Order() { Price = new decimal(180.66) }, customer.Id);
 
             HttpResponseMessage response = await _client.GetAsync($"/api/customer/{customer.Id}/orders");
 

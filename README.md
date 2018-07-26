@@ -2,7 +2,6 @@
 
 - Could use DTO/View model to decouple more, but I prefer to use models due to small scope to save time
 - Other Exception handlers
-- Return BadRequest and others via Action Filter OnExecuting.
 - Not saving user and pass at source code.
 - Correlation ID
 - Customizing EF mapping SQL char limitation and automatic CreatedDate 
@@ -21,4 +20,5 @@
 - Moq - Only for mongodb driver, but changed the strategy
 
 # Other Notes
+- Return BadRequest and others via Action Filter OnExecuting no need bacause all validation is overriden by fluentValidation
 - There is only one try catch in the RushOrders.Middleware.ErrorHandlingMiddleware

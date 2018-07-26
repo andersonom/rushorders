@@ -11,12 +11,10 @@ namespace RushOrders.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerService _customerService;
-        private readonly IOrderService _orderService;
 
-        public CustomerController(ICustomerService customerService, IOrderService orderService)
+        public CustomerController(ICustomerService customerService)
         {
             _customerService = customerService;
-            _orderService = orderService;
         }
 
         // GET api/values
@@ -44,12 +42,8 @@ namespace RushOrders.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Customer customer)
         {
-            if (ModelState.IsValid)
-            {
-                await _customerService.AddAsync(customer);
-                return Ok();
-            }
-            return BadRequest(ModelState);
+            await _customerService.AddAsync(customer);
+            return Ok();
         }
     }
 }

@@ -9,11 +9,11 @@ using RushOrders.Core.Interfaces.Repositories;
 using RushOrders.Core.Models;
 using RushOrders.Data.Context;
 using RushOrders.Data.Repositories;
-using RushOrders.Middleware;
 using RushOrders.Core.Validations;
 using Swashbuckle.AspNetCore.Swagger;
 using FluentValidation.AspNetCore;
 using Newtonsoft.Json;
+using RushOrders.Api.Middleware;
 using RushOrders.Core.Interfaces.Services;
 using RushOrders.Service;
 

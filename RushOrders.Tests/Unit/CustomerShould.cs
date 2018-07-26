@@ -1,4 +1,5 @@
 using System.Linq;
+using FluentValidation.Results;
 using RushOrders.Core.Models;
 using RushOrders.Core.Validations;
 using RushOrders.Tests.Fixture;
@@ -8,18 +9,18 @@ namespace RushOrders.Tests.Unit
 {
     public class CustomerShould
     {
-        private readonly CustomerValidator validator;
+        private readonly CustomerValidator _validator;
         public CustomerShould()
         {
             //Arrange
-            validator = new CustomerValidator();
+            _validator = new CustomerValidator();
         }
         [Fact]
         public void CustomerShouldBeValid()
         {
             //Act
             Customer sut = CustomerFixtures.GetCustomerList.FirstOrDefault();
-            var results = validator.Validate(sut);
+            ValidationResult results = _validator.Validate(sut);
 
             //Assert
             Assert.True(results.IsValid);
@@ -48,7 +49,7 @@ namespace RushOrders.Tests.Unit
                 Email = email
             };
 
-            var results = validator.Validate(sut);
+            var results = _validator.Validate(sut);
 
             //Assert
             Assert.True(results.IsValid);
@@ -69,7 +70,7 @@ namespace RushOrders.Tests.Unit
                 Name = "Anderson Martins",
                 Email = email
             };
-            var results = validator.Validate(sut);
+            var results = _validator.Validate(sut);
 
             //Assert
             Assert.False(results.IsValid);
@@ -90,7 +91,7 @@ namespace RushOrders.Tests.Unit
                 Email = "andersonom@gmail.com"
             };
 
-            var results = validator.Validate(sut);
+            var results = _validator.Validate(sut);
 
             //Assert
             Assert.False(results.IsValid);

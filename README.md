@@ -6,7 +6,7 @@
 - Correlation ID
 - Customizing EF mapping SQL char limitation and automatic CreatedDate 
 - Authentication and Authorization was already outside scope
-- Capture log from ILogger at Middleware.ErrorHandlingMiddleware
+- Capture log from ILogger at Middleware.ErrorHandlingMiddleware and write the log somewhere
 
 #Some utilized libs to mention:
 - MongoDB.Driver
@@ -18,7 +18,3 @@
 - FluentAssertions
 - xUnit
 - Moq - Only for mongodb driver, but changed the strategy
-
-# Other Notes
-- Return BadRequest and others via Action Filter OnExecuting no need bacause all validation is overriden by fluentValidation
-- There is only one try catch in the RushOrders.Middleware.ErrorHandlingMiddleware

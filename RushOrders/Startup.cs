@@ -65,6 +65,13 @@ namespace RushOrders
         {
             if (env.IsDevelopment())
             {
+                using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+                {
+                    var dbContext = serviceScope.ServiceProvider.GetRequiredService<SqlContext>();
+                    if (!dbContext.Database.EnsureCreated())
+                        dbContext.Database.Migrate();
+                }
+
                 app.UseDeveloperExceptionPage();
             }
             else

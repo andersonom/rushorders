@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 using RushOrders.Api.Middleware;
 using RushOrders.Core.Interfaces.Services;
 using RushOrders.Service;
+using Microsoft.AspNetCore.Rewrite;
 
 namespace RushOrders
 {
@@ -90,6 +91,11 @@ namespace RushOrders
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Orders API V1");
             });
+
+            //Redirect swagger as initial page
+            var option = new RewriteOptions();
+            option.AddRedirect("^$", "swagger");
+            app.UseRewriter(option);
         }
     }
 }
